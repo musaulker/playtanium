@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:app="http://www.appcelerator.org">
+	
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <title>Contact Manager</title>
+	    <script src="javascripts/appcelerator-debug.js" type="text/javascript"></script>
+		<script type="text/javascript" src="gears_init.js"></script>
+		<script type="text/javascript" src="index.js"></script>
+
+	    <link rel="shortcut icon" href="images/favicon.ico"/>
+		<link rel="stylesheet" href="index.css"/>
+
+	</head>
+
+	<body style="visibility: hidden" on="l:app.compiled then visible and script[CM.Init()]">
+
+		<div id="cmBody">
+			<div id="cmHeader">
+				<div id="cmLogo"></div>
+				<div id="cmHeaderControls">
+					<div id="cmSearch">
+						<input class="searchField" value="Search Folder" id="searchField" 
+							on="click then script[CM.SearchPrep()]
+								or blur then script[CM.SearchPrep()]
+								or keyup then r:cm.contacts.get[searchTerm=$searchField]"/>
+					</div>
+					<div id="cmAddFolder" 
+						on="click then r:cm.folders.add 
+							and r:cm.folders.get
+							and l:cm.folders.select[id=expr(CM.currentFolder)]">
+					</div>	
+					<div id="cmAddContact" 
+						on="click then r:cm.contacts.add
+							and r:cm.folders.get
+							and l:cm.folders.select[id=expr(CM.currentFolder)]
+							or l:cm.folders.select[id=1] then hide else show">
+					</div>
+				</div>
+			</div>
+			<div id="cmFolderList">
+				<div id="cmFolderListShadowTop"></div>
+				<div id="cmFolderListShadow"></div>
+				<app:iterator 
+					id="folderContainer" 
+					property="results"
+					on="r:cm.folders.data then execute 
+						and l:cm.folders.select[id=expr(CM.currentFolder)]" >
+		            <div 
+						id="folder_#{id}" 
+						class="folder"
+						
+						on="click then l:cm.folders.select[id=#{id}] if expr[!CM.inEditMode]
+							or l:cmFolder.dropout[id=#{id}] then effect[Fade]
+							or mouseover then
+								l:cm.Folder[id=#{id}, state=hover] if expr[!CM.inEditMode &amp;&amp; #{id} != 1]
+							or mouseover then set[background-color=#445866]
+							or mouseout then set[background-color=transparent]
+								and l:cm.Folder[id=#{id}, state=normal] if expr[!CM.inEditMode]">
+
+						<!-- the following three divs represent the three states to a folder, displayed, moused over, and editing -->
+
+		                <div 
+							id="folderName_#{iterator_index}"
+							class="folderName"
+							on="l:cm.Folder[id=#{id}, state=edit] then hide  
+								or l:cm.Folder[id=#{id}, state=normal] then show">#{folderName}
+						</div> 
+
+						<!-- this is displayed when moused over the folder if not in edit mode -->
+
+						<div 
+							class="editControls" 
+							style="display: none" 
+							on="l:cm.Folder[id=#{id}, state=edit] then hide
+								or l:cm.Folder[id=#{id}, state=normal] then hide
+								or l:cm.Folder[id=#{id}, state=hover] then show if expr[!CM.inEditMode]">
+							
+							<input type="button" value="EDIT" title="Edit" class="folderEditButton" 
+								on="click! then l:cm.Folder[id=#{id}, state=edit]">
+							</input>
+							<input type="button" value="DEL" title="Delete" class="folderDeleteButton" 
+								on="click! then l:cmFolder.dropout[id=#{id}] 
+										and r:cm.folders.delete[id=#{id}]
+										and r:cm.folders.get">
+							</input>
+						</div>
+
+						<!-- this is displayed while in edit mode -->
+
+						<div 
+							class="folderEdit"
+							style="display: none"
+							on="l:cm.Folder[id=#{id}, state=edit] then show and script[CM.inEditMode=true]
+								or l:cm.Folder[id=#{id}, state=normal] then hide">
+							
+							<input 
+								type="text" 
+								value="#{folderName}" 
+								id="folderEdit_#{id}"
+								maxlength="25" 
+								on="l:cm.Folder[id=#{id}, state=edit] then focus
+										and script[CM.tempEditValue = '#{folderName}';]"> <!-- there should be a better way to do this -->
+							</input>
+							
+							<div class="editControls">
+								<input type="button" value="SAVE" title="Save" class="folderSaveButton" 
+									on="click then r:cm.folders.update[id=#{id}]
+											and r:cm.folders.get
+											and script[CM.inEditMode=false]">
+								</input>
+								<input type="button" value="CANCEL" title="Cancel" class="folderSaveButton" 
+									on="click then l:cm.Folder[id=#{id}, state=normal]
+											and script[CM.inEditMode=false; $('folderEdit_#{id}').value = CM.tempEditValue;]"> <!-- there should be a better way to do this -->
+								</input>			
+							</div>
+											
+						</div>
+						
+						<span class="folderContentCount" id="folderContentCount_#{id}">(#{folderContentCount})</span>
+						
+					</div>
+		        </app:iterator> 		
+				
+			</div>
+			<div id="cmContactListContainer">
+				<div id="cmContactList">
+
+					<app:iterator on="r:cm.contacts.data then execute" property="results">
+			            <div class="contact" id="contactRecord_#{id}" 
+							
+							on="mouseover! then set[background-color=#445866]
+									and l:cm.Contact[id=#{id}, state=hover] 
+								or mouseout! then set[background-color=#21272e]
+									and l:cm.Contact[id=#{id}, state=normal]
+								or l:cmRecord.dropout[id=#{id}] then effect[fade]">
+			                
+							<div class="editControls" style="display: none" 
+								on="l:cm.Contact[id=#{id}, state=hover] then show
+									or l:cm.Contact[id=#{id}, state=normal] then hide">
+								<input type="button" value="EDIT" title="Edit" class="contactEditButton"
+									on="click then l:cm.contacts.edit[id=#{id}, state=edit]">
+								</input>
+								
+								<input type="button" value="DEL" title="Delete" class="contactDeleteButton" 
+									on="click then l:cmRecord.dropout[id=#{id}] 
+											and r:cm.contacts.delete[id=#{id}]
+											and r:cm.folders.get">
+								</input>
+								
+							</div>
+							<div id="contactHeader_#{id}" 
+								on="click then l:cm.Contact[id=#{id}, state=expanded] 
+									or l:showContactHeader_#{id} then show 
+									or l:hideContactHeader_#{id} then hide">
+								
+								<div class="contactName">#{contactName}</div>
+			            		<div class="contactTitle">#{title}</div>
+							</div>
+							<div class="contactEdit" id="contactEdit_#{id}" style="display: none" on="l:showContactEdit_#{id} then show or l:hideContactEdit_#{id} then hide">
+								<input type="text" value="#{contactName}" id="contactNameEdit_#{id}" maxlength="50"></input>
+								<input type="text" value="#{title}" id="contactTitleEdit_#{id}" maxlength="100"></input>
+							</div>
+							
+							<!-- this is displayed as the regular contact information -->
+							
+							<div style="display: none" id="contactData_#{id}" 
+								on="l:cm.Contact[id=#{id}, state=expanded] then toggle[display=block]
+									">
+								<div class="contactData">
+									<div class="picture"><!-- img src="#cmPicturePath" / --></div>
+									<div class="details">
+										<div>
+											<span class="fieldLabel">email</span> #{email} <span class="fieldLabel">url</span> #{url}<br/>
+											<span class="fieldLabel">work</span> #{phoneWork}<br/>
+											<span class="fieldLabel">home</span> #{phoneHome}<br/>
+	 										<span class="fieldLabel">address</span> #{address} #{city} #{state} #{zip} </div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- this is displayed when in edit mode -->
+							
+							<div style="display: none;" 
+								on="l:cm.contacts.edit[id=#{id}, state=edit] then show
+									or l:cm.contacts.edit[id=#{id}, state=normal] then hide">
+								<div class="modalMaskingLayer">
+								<div class="editLayer">
+									<div class="editPicture"><!-- img src="#cmPicturePath" / --></div>
+									<div class="editName" >Editing #{contactName}</div>
+									<div class="editDetails">
+										
+										<div style="float: left; width: 180px;">
+											<div class="fieldLabel">name</div>
+												<input class="inputField" value="#{contactName}" id="contactName_#{id}" on="blur then r:cm.contacts.update[fieldId=contactName, recordId=#{id}]"></input>					
+											<div class="fieldLabel">email</div>
+												<input class="inputField" value="#{email}" id="email_#{id}" on="blur then r:cm.contacts.update[fieldId=email, recordId=#{id}]"></input>										
+											<div class="fieldLabel">work</div>
+												<input class="inputField" value="#{phoneWork}" id="phoneWork_#{id}" on="blur then r:cm.contacts.update[fieldId=phoneWork, recordId=#{id}]"></input>
+											<div class="fieldLabel">address</div>
+												<input class="inputField" value="#{address}" id="address_#{id}" on="blur then r:cm.contacts.update[fieldId=address, recordId=#{id}]"></input> 
+
+	 									</div>
+										<div  style="float: left">
+											<div class="fieldLabel">title</div>
+											 	<input class="inputField" value="#{title}" id="title_#{id}" on="blur then r:cm.contacts.update[fieldId=title, recordId=#{id}]"></input>
+											<div class="fieldLabel">url</div>
+												<input class="inputField" value="#{url}" id="url_#{id}" on="blur then r:cm.contacts.update[fieldId=url, recordId=#{id}]"></input>
+	 										<div class="fieldLabel">home</div>
+												<input class="inputField" value="#{phoneHome}" id="phoneHome_#{id}" on="blur then r:cm.contacts.update[fieldId=phoneHome, recordId=#{id}]"></input>
+											<div class="fieldLabel">city</div>
+												<input class="inputField" style="width: 100px" value="#{city}" id="city_#{id}" on="blur then r:cm.contacts.update[fieldId=city, recordId=#{id}]"></input>
+											<div class="fieldLabel">state</div>
+												<input class="inputField" style="width: 20px" value="#{state}" id="state_#{id}" on="blur then r:cm.contacts.update[fieldId=state, recordId=#{id}]"></input>
+											<div class="fieldLabel">zip </div>
+												<input class="inputField" style="width: 50px" value="#{zip}" id="zip_#{id}" on="blur then r:cm.contacts.update[fieldId=zip, recordId=#{id}]"></input>
+										</div>
+									</div>
+									<div>
+										<input type="button" class="editControlsInput" style="position: absolute; right: 75px;" value="DONE" 
+											on="click then l:cm.contacts.edit[id=#{id}, state=normal]
+													and r:cm.contacts.get[id=searchTerm=$searchField]"></input>
+									</div>
+									
+								</div>
+								</div>
+							</div>							
+						</div>
+			        </app:iterator> 
+
+				</div>			
+			</div>
+			<div id="cmFooter">
+				<div id="titaniumLogo"></div>
+			</div>		
+		</div>
+		
+	</body>
+	
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
