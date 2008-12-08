@@ -13,6 +13,11 @@ body
 	color: #fff;
 }
 
+body.win32 {
+	/* f9f9f9 is the special transparency for win32 */
+	background-color: #f9f9f9;
+}
+
 #close
 {
 	position: fixed;
@@ -67,7 +72,7 @@ html
 	left: 100px;
 	right: 100px;
 	bottom: 100px;
-	background-color: #000;	
+	background-color: #000;
 
 }
 
