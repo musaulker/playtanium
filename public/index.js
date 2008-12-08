@@ -6,7 +6,10 @@ var currentVideo = {
 	title: "No title",
 	thumbNail: "",
 	description: "No description for this video is available",
-	position: 0
+	position: 0,
+	handlePosition: 0,
+	handleStart: 50,
+	handleEnd: 602
 };
 
 // allowScriptAccess must be set to allow the Javascript from one 
@@ -49,6 +52,7 @@ ti.ready(function() {
 		isLocalSearch: false,
 		db: new ti.Database,
 		bookmarkData: {},
+		updateFlag: true,
 		
 		getBookmarkData: function()
 		{
@@ -60,7 +64,6 @@ ti.ready(function() {
 			
 			while (rs.isValidRow()) 
 			{
-			
 				transport.feed.entry.push({
 				
 					id: rs.field(0),
@@ -77,12 +80,10 @@ ti.ready(function() {
 						},
 						media$thumbnail: [{ url: rs.field(4)}]
 					}
-				
 				});
 				
 				rs.next();
 			}
-			
 			Player.bookmarkData = transport;
 		},	
 		
@@ -167,8 +168,11 @@ ti.ready(function() {
 	
 	$MQL("l:player.search", function(msgId, msgData)
 	{
-		Player.getBookmarkData();
-
+		if (Player.updateFlag == true) {
+			Player.getBookmarkData();
+			Player.updateFlag = false;
+		}			
+			
 		if (Player.isLocalSearch == false)
 		{
 			var ajax = new Ajax.Request("http://gdata.youtube.com/feeds/api/videos", {
@@ -197,11 +201,14 @@ ti.ready(function() {
 		}
 		else
 		{
+			Player.getBookmarkData();
 			buildVideoData(Player.bookmarkData, true);
 		}
 		
 		function buildVideoData(transport, isLocal)
 		{
+		
+			
 			var videoData = null;
 			
 			if (isLocal == false) 
@@ -285,6 +292,7 @@ ti.ready(function() {
 									event.cancelBubble = true;
 									Player.db.execute(Player.SQL.deleteBookmark, [Player.bookmarkData.feed.entry[i].id]);
 									
+									Player.updateFlag = true;
 									$MQ("l:player.search");
 								});
 								
@@ -319,6 +327,7 @@ ti.ready(function() {
 								item.media$group.media$description.$t, 
 								item.media$group.media$thumbnail[0].url]);
 							
+							Player.updateFlag = true;
 							$MQ("l:player.search");
 						});						
 					
@@ -339,7 +348,7 @@ ti.ready(function() {
 						
 						Player.db.execute(Player.SQL.deleteBookmark, [item.id]);
 						
-						Player.getBookmarkData();
+						Player.updateFlag = true;
 						$MQ("l:player.search");
 					});			
 					

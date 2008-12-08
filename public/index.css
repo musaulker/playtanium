@@ -116,13 +116,15 @@ html
 	top: 0px;
 	left: 74px;
 	right: 70px;
-	height: 8px;
-	background-color: #6c6c6c;
-
+	height: 20px;
+	background-image: url('images/player/progress.png');
+	background-repeat: repeat-x;	
 }
 
 #progressBarHandle
 {
+	position: relative;
+	left: -45px;
 	height: 20px;
 	width: 50px;
 	background-image: url('images/player/handle.png');
