@@ -18332,7 +18332,7 @@ function(element,condition,action,elseAction,delay,ifCond)
 			{
 				Appcelerator.Compiler.executeAfter(actionFunc,delay,{id:id});
 			}
-		;}
+		};
 		Draggables.addObserver(observer);
 		
 		Appcelerator.Compiler.addTrash(element, function()

@@ -16,8 +16,8 @@ body
 #close
 {
 	position: fixed;
-	right: 40px;
-	top: 25px;
+	right: 30px;
+	top: 30px;
 	height: 15px;
 	width: 15px;
 	text-shadow: rgb(0, 0, 0) 1px 1px 5px;
@@ -36,7 +36,7 @@ html
 #mediaInformation
 {
 	position: fixed;
-	top: 23px;
+	top: 28px;
 	left: 100px;
 	height: 18px;
 	right: 100px;
@@ -477,7 +477,7 @@ input[type=password]:focus {
 	position: fixed;
 	top: 0px;
 	right: 0px;
-	width: 425px;
+	width: 420px;
 	height: 360px;
 	
 	background-image: url('images/player/ne.png');
@@ -488,7 +488,7 @@ input[type=password]:focus {
 	position: fixed;
 	top: 0px;
 	left: 0px;	
-	width: 424px;
+	width: 420px;
 	height: 361px;
 	
 	background-image: url('images/player/nw.png');
@@ -499,7 +499,7 @@ input[type=password]:focus {
 	position: fixed;
 	bottom: 3px;
 	right: 0px;
-	width: 425px;
+	width: 420px;
 	height: 235px;
 	
 	background-image: url('images/player/se.png');
@@ -510,7 +510,7 @@ input[type=password]:focus {
 	position: fixed;
 	bottom: 0px;
 	left: 1px;
-	width: 425px;
+	width: 419px;
 	height: 237px;
 	
 	background-image: url('images/player/sw.png');

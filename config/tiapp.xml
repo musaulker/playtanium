@@ -13,10 +13,10 @@
 		<id>initial</id>
 		<title>Playtanium</title>
 		<url>app://index.html</url>
-		<width>850</width>
+		<width>840</width>
 		<min-width>0</min-width>
 		<max-width>9000</max-width>
-		<height>600</height>
+		<height>597</height>
 		<min-height>0</min-height>
 		<max-height>9000</max-height>
 		<maximizable>true</maximizable>

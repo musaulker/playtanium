@@ -19,10 +19,10 @@
 
 		<div id="playerBody">
 			<div id="background"></div>
-			<div id="n"></div>
-			<div id="e"></div>
-			<div id="s"></div>
-			<div id="w"></div>
+			<!-- div id="n"></div -->
+			<!-- div id="e"></div -->
+			<!-- div id="s"></div -->
+			<!-- div id="w"></div -->
 			<div id="ne"></div>
 			<div id="se"></div>
 			<div id="nw"></div>
@@ -50,11 +50,9 @@
 					or l:player[mode=play] then effect[appear]">
 				<div id="progressBar">
 					<div id="progressBarHandle" 
-						set="behavior[draggable, constraint=horizontal"
-						on="mouseup then script[alert($progressBarHandle.offsetLeft)]
-							or mousedown then script[alert($progressBarHandle.offsetLeft)]
-							or drag then script[alert('x')]
-							">
+						set="behavior[draggable, constraint=horizontal]"
+						on="drag then script[Player.hConstraint(0, 100)]
+								or dragend then script[alert('x')]">
 						<div id="handlePointer"></div>
 					</div>
 				</div>

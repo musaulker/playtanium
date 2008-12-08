@@ -54,6 +54,16 @@ ti.ready(function() {
 		bookmarkData: {},
 		updateFlag: true,
 		
+		horizontalConstraint: function(left, right)
+		{
+			alert(event.clientX + 'left');
+		},
+		
+		cueVideo: function()
+		{
+			
+		},
+	
 		getBookmarkData: function()
 		{
 			var rs = Player.db.execute(Player.SQL.getBookmarks, ["%" + $("searchInput").value + "%"]);
