@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org" xmlns:appc="http://www.appcelerator.org">
     
-	<id>com.titaniumapp.player</id>
-	<name>player</name>
+	<id>com.titaniumapp.playtanium</id>
+	<name>playtanium</name>
 	<description>Your application description for player here</description>
 	<copyright>Copyright (c) Your Company</copyright>
-	<homepage>http://www.yourhomepage.com</homepage>
+	<homepage>http://www.titaniumapp.com</homepage>
 	<updatesite>http://updatesite.titaniumapp.com</updatesite>
 	<version>0.1</version>
 
 	<window>
 		<id>initial</id>
-		<title>Welcome to player</title>
+		<title>Playtanium</title>
 		<url>app://index.html</url>
 		<width>850</width>
 		<min-width>0</min-width>

@@ -31,7 +31,7 @@
 			<div id="splash" on="l:hideSplash then hide"></div>
 			<div id="logo" on="l:hideSplash then hide"></div>
 			<div id="appTitle" on="l:hideSplash then hide">Playtanium</div>
-			<div id="mediaContainer"  style="display: none;"
+			<div id="mediaContainer" style="display: none;"
 				on="l:player[mode=search] then hide
 					or l:player[mode=bookmarks] then hide
 					or l:player[mode=play] then effect[appear]">
@@ -49,7 +49,12 @@
 					or l:player[mode=bookmarks] then hide
 					or l:player[mode=play] then effect[appear]">
 				<div id="progressBar">
-					<div id="progressBarHandle" set="behavior[draggable, constraint=horizontal">
+					<div id="progressBarHandle" 
+						set="behavior[draggable, constraint=horizontal"
+						on="mouseup then script[alert($progressBarHandle.offsetLeft)]
+							or mousedown then script[alert($progressBarHandle.offsetLeft)]
+							or drag then script[alert('x')]
+							">
 						<div id="handlePointer"></div>
 					</div>
 				</div>
@@ -87,14 +92,14 @@
 			</div>
 
 			<div id="bookmarks" style="display: none;"
-				on="click then l:player[mode=bookmarks, text=Bookmarks] and l:player.search
+				on="click then l:clearSearch and l:player[mode=bookmarks, text=Bookmarks] and l:player.search
 					or l:player[mode=play] then effect[appear]
 					or l:player[mode=search] then hide
 					or l:player[mode=bookmarks] then hide">
 			</div>
 			
 			<div id="bookmarksFromSearch" 
-				on="click then l:player[mode=bookmarks, text=Bookmarks] and l:player.search
+				on="click then l:clearSearch and l:player[mode=bookmarks, text=Bookmarks] and l:player.search and l:hideSplash
 					or l:player[mode=search] then effect[appear]
 					or l:player[mode=play] then hide
 					or l:player[mode=bookmarks] then hide">
@@ -136,8 +141,11 @@
 					<div id="searchRight"></div>
 					<input type="text" id="searchInput" value="Search YouTube for Videos" 
 						on="keyup then l:player.search and l:hideSplash
+							or l:clearSearch then set[value='']
 							or click then set[color=#fff]
-							or blur then set[color=#666]"/>
+							or click then set[value=''] if expr[$('searchInput').value=='Search YouTube for Videos']
+							or blur then set[color=#666]
+							or blur then set[value='Search YouTube for Videos'] if expr[$('searchInput').value=='']"/>
 				</div>
 				
 			</div>

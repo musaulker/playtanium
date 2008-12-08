@@ -12170,7 +12170,7 @@ Appcelerator.Compiler.addEventListener = function (element,event,action,delay)
         a.delay(delay/1000);
 	}) : logWrapper;
 
-	Event.observe(element,event,functionWrapper,false);
+	Event.observe(element,event,functionWrapper, true);
 
 	Appcelerator.Compiler.addTrash(element,function()
 	{
@@ -18386,13 +18386,19 @@ function(element,condition,action,elseAction,delay,ifCond)
 		}
 	}
 	return false;
-});Appcelerator.Compiler.Events = 
+});
+
+Appcelerator.Compiler.Events = 
 [
 	'click',
 	'focus',
 	'blur',
 	'dblclick',
-	'mousedown',
+	'mousedown', 
+	'mouseup', // PF
+	'dragstart', // PF
+	'drag', // PF
+	'dragend', // PF
 	'mouseout',
 	'mouseover',
 	'mousemove',
@@ -18666,7 +18672,10 @@ function(element,condition,action,elseAction,delay,ifCond)
 			if (Object.isString(target))
 			{
 				target = target == 'window' ? window : $(target);
+				Logger.info(Object.isString(target));
 			}
+			
+			
 
 			if (!target)
 			{
@@ -18676,9 +18685,12 @@ function(element,condition,action,elseAction,delay,ifCond)
 			$D('adding listener to '+target+', name: '+target.nodeName+', id: '+target.id+' for event: '+event);
 			var actionFunc = Appcelerator.Compiler.makeConditionalAction(target.id,action,ifCond);
 
+
 			var scope = {id:target.id};
 			var cf = function(event)
 			{
+				
+				//if (eventName=="mouseup") alert("event="+event);
 				if (Appcelerator.Compiler.filteredEvent(event,filters))
 					return;
 				var me = $(scope.id);
@@ -19088,6 +19100,25 @@ function(element,condition,action,elseAction,delay,ifCond)
 	}
 	return null;
 });
+
+//
+// 
+//
+
+Appcelerator.Compiler.registerCustomCondition(
+{
+	conditionPrefixes: ['constrain'],
+	description: "Respond to a local or remote message"
+},
+function(element,condition,action,elseAction,delay,ifCond)
+{
+		var id = element.id;
+		var actionParams = Appcelerator.Compiler.parameterRE.exec(condition);
+		alert(actionParams)
+
+	return null;
+});
+
 
 Appcelerator.Compiler.MessageAction = {};
 
