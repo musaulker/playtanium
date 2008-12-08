@@ -51,7 +51,7 @@
 				<div id="progressBar">
 					<div id="progressBarHandle" 
 						set="behavior[draggable, constraint=horizontal]"
-						on="drag then script[Player.hConstraint(0, 100)]
+						on="drag then script[alert(Player.initialized)]
 								or dragend then script[alert('x')]">
 						<div id="handlePointer"></div>
 					</div>

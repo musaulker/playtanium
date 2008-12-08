@@ -32,6 +32,8 @@ swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&amp;playerapi
 
 document.onselectstart = function() { return false; };
 
+var Player = { initialized: false };
+
 ti.ready(function() {
 
 	//$("#play").on("click then r:player.action[mode=play]");
@@ -44,7 +46,7 @@ ti.ready(function() {
 		}
 	});
 	
-	var Player = {
+	Player = {
 	
 		isLocalSearch: false,
 		db: new ti.Database,
