@@ -6,7 +6,7 @@ a
 
 body 
 {
-	font-family: "Lucida Sans";
+	font-family: "Lucida Sans", Verdana, sans-serif;
 	font-size: 12px;
 	cursor: default;
 	overflow: hidden;
