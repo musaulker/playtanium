@@ -6,10 +6,7 @@ var currentVideo = {
 	title: "No title",
 	thumbNail: "",
 	description: "No description for this video is available",
-	position: 0,
-	handlePosition: 0,
-	handleStart: 50,
-	handleEnd: 602
+	position: 0
 };
 
 // allowScriptAccess must be set to allow the Javascript from one 
@@ -54,7 +51,7 @@ ti.ready(function() {
 		bookmarkData: {},
 		updateFlag: true,
 		
-		horizontalConstraint: function(left, right)
+		hConstraint: function(left, right)
 		{
 			alert(event.clientX + 'left');
 		},
