@@ -27,7 +27,7 @@ window.onYouTubePlayerReady = function(playerId)
 	
 	//setInterval(updateytplayerInfo, 250);
 	//ytplayer.addEventListener("onStateChange", "onytplayerStateChange");
-};	
+};
 
 var atts = { id: "myytplayer" };
 swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&amp;playerapiid=ytplayer", 
@@ -35,7 +35,13 @@ swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&amp;playerapi
 
 document.onselectstart = function() { return false; };
 
-ti.ready(function() {
+ti.ready(function($) {
+
+	ti.Extras.setDraggableRegionHandler(function (target,x,y)
+	{
+		return (target.id == "n" || target.id == "nw" || target.id == "ne" || target.id == "mediaInformation");
+		
+	});
 
 	//$("#play").on("click then r:player.action[mode=play]");
 
