@@ -79,37 +79,6 @@ ti.ready(function() {
 				return false;
 			}
 		},
-
-		vConstraint: function(top, bottom)
-		{
-			event.cancelBubble = true;
-			
-			if(event.y < top)
-			{
-				$("volumeSliderHandle").className = "volumeSliderHandle";
-				$("volumeSliderHandle").ondragend();
-				return false;
-			}
-
-			if(event.y > bottom)
-			{
-				$("volumeSliderHandle").className = "volumeSliderHandleMax";
-				$("volumeSliderHandle").ondragend();
-				return false;
-			}
-		},		
-		
-		setVolume: function()
-		{
-			slider = $("volumeSlider");
-			
-			var y = event.y - slider.offsetTop;
-			alert(y + ' ' + slider.style.top + ' ' + slider.offsetTop)
-			alert(y / $("volumeSlider").offsetHeight);
-			
-			//ytplayer.setVolume();
-			return false;
-		},
 		
 		setPosition: function()
 		{
