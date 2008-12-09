@@ -21,8 +21,9 @@ window.onYouTubePlayerReady = function(playerId)
 {
 	ytplayer = document.getElementById("myytplayer");
 	ytplayer.loadVideoById(currentVideo.id, 0);
+	ytplayer.mute();
 	
-	setInterval(Player.updateProgressBar, 100);
+	Player.updateProgressInterval = setInterval(Player.updateProgressBar, 1);
 	//ytplayer.addEventListener("onStateChange", "onytplayerStateChange");
 };	
 
@@ -36,17 +37,16 @@ var Player = null;
 
 ti.ready(function() {
 
-   ti.Extras.setDraggableRegionHandler(function (target,x,y)
-   {
-           return (target.id == "n" || target.id == "nw" || target.id == "ne" || target.id == "mediaInformation");
-   });
-
+	ti.Extras.setDraggableRegionHandler(function (target,x,y)
+	{
+	   return (target.id == "n" || target.id == "nw" || target.id == "ne" || target.id == "mediaInformation");
+	});
 
 	Appcelerator.Compiler.registerCustomAction('close',
 	{
 		execute: function(id, action, params)
 		{
-	        ti.Window.currentWindow.close();
+	        window.close();
 		}
 	});
 	
@@ -61,41 +61,45 @@ ti.ready(function() {
 		
 		hConstraint: function(left, right)
 		{
+			clearInterval(Player.updateProgressInterval);
 			event.cancelBubble = true;
 			Player.leftPos = left;
 			Player.rightPos = right;
-			
+
 			if(event.clientX < left)
 			{
 				$("progressBarHandle").style.right = left + "px";
 				$("progressBarHandle").ondragend();
 				return false;
 			}
-			
+
 			if(event.clientX > right)
 			{
 				$("progressBarHandle").style.right = right + "px";
-				$("progressBarHandle").ondragend();		
+				$("progressBarHandle").ondragend();
 				return false;
 			}
 		},
 		
 		jumpTo: function()
 		{
-			var offsetPosition = event.x - 148;
-			var unitPosition = $("progressBar").offsetWidth/100;
-			$("progressBarHandle").style.left = offsetPosition + "px";
-			ytplayer.seekTo(offsetPosition+225 / unitPosition, true);
+			var p1 = event.x - 95;
+			var p2 = $("progressBar").offsetWidth;
+
+			ytplayer.seekTo(p1 / p2 * ytplayer.getDuration(), true);
 			return false;
 		},
 		
 		updateProgressBar: function()
 		{
-			var currentPosition = ytplayer.getCurrentTime();
-			var duration = ytplayer.getDuration();
-			
-			var unitPosition = currentDu;
-			$("progressBarHandle").style.left = offsetPosition + "px";
+			if (ytplayer) 
+			{
+				var currentPosition = ytplayer.getCurrentTime();
+				var unitPosition = ytplayer.getDuration() / $("progressBar").offsetWidth;
+				
+				// Logger.info((currentPosition / unitPosition) - 48)
+				$("progressBarHandle").style.left = (currentPosition / unitPosition) - 48 + "px";
+			}
 		},
 		
 		cueVideo: function()
@@ -103,9 +107,10 @@ ti.ready(function() {
 			if(event.x > Player.leftPos && event.y < Player.rightPos)
 			{
 				$("progressBarHandle").style.right = event.x + "px";
+				Player.updateProgressInterval = setInterval(Player.updateProgressBar, 1);
 			}
 		},
-	
+		
 		getBookmarkData: function()
 		{
 			var rs = Player.db.execute(Player.SQL.getBookmarks, ["%" + $("searchInput").value + "%"]);
