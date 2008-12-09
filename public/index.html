@@ -19,10 +19,6 @@
 
 		<div id="playerBody">
 			<div id="background"></div>
-			<!-- div id="n"></div>
-			<div id="e"></div>
-			<div id="s"></div>
-			<div id="w"></div -->
 			<div id="ne"></div>
 			<div id="se"></div>
 			<div id="nw"></div>
@@ -52,7 +48,7 @@
 					or l:player[mode=bookmarks] then hide
 					or l:player[mode=play] then effect[appear]">
 
-				<div id="progressBar" on="click then script[Player.jumpTo()]">
+				<div id="progressBar" on="click then script[Player.setPosition()]">
 					<div id="progressBarHandle" style="left: 0px;"
 						set="behavior[draggable, constraint=horizontal]"
 						on="drag then script[Player.hConstraint(100, 740)]
@@ -88,10 +84,15 @@
 					
 					<!-- how about a volume control? that'd be cool! -->
 					<!-- div id="volume" on="click then l:playerVolume">
-						<div id="volumeSlider" style="display:none" on="l:playerVolume then toggle[display=block]">
-							<img id="volumeSliderHandle" src="images/player/volumeSliderHandle.png" set="behavior[draggable, constraint=vertical">
+					</div>
+					<div id="volumeSlider" style="display:none" 
+						on="l:playerVolume then toggle[display=block]">
+						<div id="volumeSliderHandle" class="volumeSliderHandle"
+						 set="behavior[draggable, constraint=vertical]"
+						 on="drag then script[Player.vConstraint(390, 490)]
+							or dragend then script[Player.setVolume()]">
 						</div>
-					</div -->
+					</div -->					
 				</div>
 			</div>
 

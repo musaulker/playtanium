@@ -281,7 +281,7 @@ html
 	min-width: 40px;
 	height: 40px;
 	top: -20px;
-	right: 10px;
+	right: 0px;
 
 	background-image: url('images/player/volume.png');
 	background-repeat: no-repeat;		
@@ -293,18 +293,27 @@ html
 	min-width: 40px;
 	height: 175px;
 	width: 43px;
-	top: -135px;
+	top: -155px;
 	right: 2px;
-
+	
 	background-image: url('images/player/volumeSlider.png');
 	background-repeat: no-repeat;		
 }
 
-#volumeSliderHandle
+.volumeSliderHandle, .volumeSliderHandleMax
 {
 	position: absolute;
 	top: 20px;
+	width: 20px;
+	height: 10px;
 	left: 14px;
+	background-image: url('images/player/volumeSliderHandle.png');
+	background-repeat: no-repeat;		
+}
+
+.volumeSliderHandleMax
+{
+	top: 100px;
 }
 
 #bookmarkCurrent

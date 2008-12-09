@@ -65,22 +65,53 @@ ti.ready(function() {
 			Player.leftPos = left;
 			Player.rightPos = right;
 
-			if(event.clientX < left)
+			if(event.x < left)
 			{
 				$("progressBarHandle").style.right = left + "px";
 				$("progressBarHandle").ondragend();
 				return false;
 			}
 
-			if(event.clientX > right)
+			if(event.x > right)
 			{
 				$("progressBarHandle").style.right = right + "px";
 				$("progressBarHandle").ondragend();
 				return false;
 			}
 		},
+
+		vConstraint: function(top, bottom)
+		{
+			event.cancelBubble = true;
+			
+			if(event.y < top)
+			{
+				$("volumeSliderHandle").className = "volumeSliderHandle";
+				$("volumeSliderHandle").ondragend();
+				return false;
+			}
+
+			if(event.y > bottom)
+			{
+				$("volumeSliderHandle").className = "volumeSliderHandleMax";
+				$("volumeSliderHandle").ondragend();
+				return false;
+			}
+		},		
 		
-		jumpTo: function()
+		setVolume: function()
+		{
+			slider = $("volumeSlider");
+			
+			var y = event.y - slider.offsetTop;
+			alert(y + ' ' + slider.style.top + ' ' + slider.offsetTop)
+			alert(y / $("volumeSlider").offsetHeight);
+			
+			//ytplayer.setVolume();
+			return false;
+		},
+		
+		setPosition: function()
 		{
 			var p1 = event.x - 95;
 			var p2 = $("progressBar").offsetWidth;
