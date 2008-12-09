@@ -29,8 +29,11 @@
 			<div id="sw"></div>
 			<div id="close" on="click then close">X</div>
 			<div id="splash" on="l:hideSplash then hide"></div>
-			<div id="logo" on="l:hideSplash then hide"></div>
+			<div id="logo" on="l:hideSplash then hide or click then l:player[mode=play, text=expr(currentVideo.title)] and hide"></div>
 			<div id="appTitle" on="l:hideSplash then hide">Playtanium</div>
+			<div id="searching" style="display: none;" on="l:searching[on=true] then show else hide">
+				<img src='images/player/indicator.gif'>
+			</div>
 			<div id="mediaContainer" style="display: none;"
 				on="l:player[mode=search] then hide
 					or l:player[mode=bookmarks] then hide
@@ -48,11 +51,11 @@
 				on="l:player[mode=search] then hide
 					or l:player[mode=bookmarks] then hide
 					or l:player[mode=play] then effect[appear]">
-				<div id="progressBar">
-					<div id="progressBarHandle" 
+				<div id="progressBar" on="click then script[Player.jumpTo()]">
+					<div id="progressBarHandle" style="left: 0px;"
 						set="behavior[draggable, constraint=horizontal]"
-						on="drag then script[alert(Player.initialized)]
-								or dragend then script[alert('x')]">
+						on="drag then script[Player.hConstraint(100, 740)]
+								or dragend then script[Player.cueVideo()]">
 						<div id="handlePointer"></div>
 					</div>
 				</div>
@@ -90,7 +93,7 @@
 			</div>
 
 			<div id="bookmarks" style="display: none;"
-				on="click then l:clearSearch and l:player[mode=bookmarks, text=Bookmarks] and l:player.search
+				on="click then l:clearSearch and l:player[mode=bookmarks, text=Bookmarks] and l:player.search and l:hideSplash
 					or l:player[mode=play] then effect[appear]
 					or l:player[mode=search] then hide
 					or l:player[mode=bookmarks] then hide">
@@ -104,7 +107,7 @@
 			</div>			
 			
 			<div id="showSearch" style="display: none;" 
-				on="click then l:player[mode=search, text=Search]
+				on="click then l:player[mode=search, text=Search] and l:hideSplash
 					or l:player[mode=bookmarks, text=Bookmarks] then effect[appear]
 					or l:player[mode=search] then hide
 					or l:player[mode=play] then hide">

@@ -1,11 +1,11 @@
 
 var currentVideo = {
 
-	id: "u1zgFlCw8Aw",
+	id: "AOfwnFSWbwM",
 	href: "",
-	title: "No title",
+	title: "Appcelerator!",
 	thumbNail: "",
-	description: "No description for this video is available",
+	description: "The appceleration of all mankind.",
 	position: 0
 };
 
@@ -32,7 +32,7 @@ swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&amp;playerapi
 
 document.onselectstart = function() { return false; };
 
-var Player = { initialized: false };
+var Player = null;
 
 ti.ready(function() {
 
@@ -52,15 +52,45 @@ ti.ready(function() {
 		db: new ti.Database,
 		bookmarkData: {},
 		updateFlag: true,
+		leftPos: 0,
+		rightPos: 0,
 		
 		hConstraint: function(left, right)
 		{
-			alert(event.clientX + 'left');
+			event.cancelBubble = true;
+			Player.leftPos = left;
+			Player.rightPos = right;
+			
+			if(event.clientX < left)
+			{
+				$("progressBarHandle").style.right = left + "px";
+				$("progressBarHandle").ondragend();
+				return false;
+			}
+			
+			if(event.clientX > right)
+			{
+				$("progressBarHandle").style.right = right + "px";
+				$("progressBarHandle").ondragend();		
+				return false;
+			}
+		},
+		
+		jumpTo: function()
+		{
+			var offsetPosition = event.x - 148;
+			var unitPosition = $("progressBar").offsetWidth/100;
+			$("progressBarHandle").style.left = offsetPosition + "px";
+			ytplayer.seekTo(offsetPosition+225 / unitPosition, true);
+			return false;
 		},
 		
 		cueVideo: function()
 		{
-			
+			if(event.x > Player.leftPos && event.y < Player.rightPos)
+			{
+				$("progressBarHandle").style.right = event.x + "px";
+			}
 		},
 	
 		getBookmarkData: function()
@@ -177,7 +207,22 @@ ti.ready(function() {
 	
 	$MQL("l:player.search", function(msgId, msgData)
 	{
-		if (Player.updateFlag == true) {
+		if (Player.searchTimeout) {
+			clearTimeout(Player.searchTimeout);
+		}
+		
+		Player.searchTimeout = setTimeout(function(){
+			Player.search();
+		}, 150);
+	
+	});
+	
+	Player.search = function()
+	{
+		$MQ("l:searching", { on: true });
+		
+		if (Player.updateFlag == true) 
+		{
 			Player.getBookmarkData();
 			Player.updateFlag = false;
 		}			
@@ -200,176 +245,182 @@ ti.ready(function() {
 				},
 				onSuccess: function(transport)
 				{
-					buildVideoData(transport, false);
+					Player.buildVideoData(transport, false);
+					
 				},
 				onFailure: function(transport)
 				{
 					//fail
+					
+				},
+				onComplete: function()
+				{
+					$MQ("l:searching", { on: false });
 				}
 			});
 		}
 		else
 		{
 			Player.getBookmarkData();
-			buildVideoData(Player.bookmarkData, true);
+			Player.buildVideoData(Player.bookmarkData, true);
+		}		
+	}
+	
+	Player.buildVideoData = function(transport, isLocal)
+	{
+		var videoData = null;
+		
+		if (isLocal == false) 
+		{
+			$("searchResults").innerHTML = "";
+			videoData = eval("(" + transport.responseText + ")");
+			
+		}
+		else
+		{
+			$("bookmarkResults").innerHTML = "";
+			$MQ("l:searching", { on: false });
+			
+			videoData = transport;
 		}
 		
-		function buildVideoData(transport, isLocal)
+		videoData.feed.entry.each(function(item) // Protoplasim
 		{
-		
+			var mediaItem = document.createElement("div");
+			mediaItem.className = "mediaItem";
+			mediaItem.isBookmarked = false;
 			
-			var videoData = null;
+			mediaItem.onclick = (function()
+			{
+				currentVideo.id = item.link[0].href.substr(item.link[0].href.lastIndexOf("=") + 1, item.link[0].href.length);
+				$MQ("l:player", {
+					mode: "play",
+					text: item.media$group.media$title.$t
+				});
+				
+				$MQ("l:player.play", { bookmarked: this.isBookmarked });
+				
+				currentVideo.href = item.link[0].href;
+				currentVideo.title = item.media$group.media$title.$t;
+				currentVideo.description = item.media$group.media$description.$t;
+				currentVideo.thumbNail = item.media$group.media$thumbnail[0].url;
+				
+			});
+			
+			mediaItem.onmouseover = function()
+			{
+				this.style.backgroundColor = "#222222";
+				this.getElementsByTagName("img")[1].style.display = "block";
+			};
+			
+			mediaItem.onmouseout = function()
+			{
+				this.style.backgroundColor = "transparent";
+				this.getElementsByTagName("img")[1].style.display = "none";
+			};
+			
+			var thumbNail = document.createElement("img");
+			thumbNail.src = item.media$group.media$thumbnail[0].url;
+			thumbNail.className = "thumbNail";
+			
+			var title = document.createElement("div");
+			title.className = "mediaTitle";
+			title.innerText = item.media$group.media$title.$t;
+			
+			var description = document.createElement("div");
+			description.className = "mediaDescription";
+			description.innerText = item.media$group.media$description.$t.substr(0, 255);
+			
+			mediaItem.appendChild(thumbNail);
+			mediaItem.appendChild(title);
+			mediaItem.appendChild(description);
 			
 			if (isLocal == false) 
 			{
-				$("searchResults").innerHTML = "";
-				videoData = eval("(" + transport.responseText + ")");
+				var bookMark = document.createElement("img");
 				
-			}
-			else
-			{
-				$("bookmarkResults").innerHTML = "";
-				videoData = transport;
-			}
-			
-			videoData.feed.entry.each(function(item) // Protoplasim
-			{
-				var mediaItem = document.createElement("div");
-				mediaItem.className = "mediaItem";
-				mediaItem.isBookmarked = false;
+				bookMark.className = "activeBookMark";
+				bookMark.title = "Bookmark";
 				
-				mediaItem.onclick = (function()
+				if (Player.bookmarkData.feed.entry.length > 0) 
 				{
-					currentVideo.id = item.link[0].href.substr(item.link[0].href.lastIndexOf("=") + 1, item.link[0].href.length);
-					$MQ("l:player", {
-						mode: "play",
-						text: item.media$group.media$title.$t
-					});
-					
-					$MQ("l:player.play", { bookmarked: this.isBookmarked });
-					
-					currentVideo.href = item.link[0].href;
-					currentVideo.title = item.media$group.media$title.$t;
-					currentVideo.description = item.media$group.media$description.$t;
-					currentVideo.thumbNail = item.media$group.media$thumbnail[0].url;
-					
-				});
-				
-				mediaItem.onmouseover = function()
-				{
-					this.style.backgroundColor = "#222222";
-					this.getElementsByTagName("img")[1].style.display = "block";
-				};
-				
-				mediaItem.onmouseout = function()
-				{
-					this.style.backgroundColor = "transparent";
-					this.getElementsByTagName("img")[1].style.display = "none";
-				};
-				
-				var thumbNail = document.createElement("img");
-				thumbNail.src = item.media$group.media$thumbnail[0].url;
-				thumbNail.className = "thumbNail";
-				
-				var title = document.createElement("div");
-				title.className = "mediaTitle";
-				title.innerText = item.media$group.media$title.$t;
-				
-				var description = document.createElement("div");
-				description.className = "mediaDescription";
-				description.innerText = item.media$group.media$description.$t.substr(0, 255);
-				
-				mediaItem.appendChild(thumbNail);
-				mediaItem.appendChild(title);
-				mediaItem.appendChild(description);
-				
-				if (isLocal == false) 
-				{
-					var bookMark = document.createElement("img");
-					
-					bookMark.className = "activeBookMark";
-					bookMark.title = "Bookmark";
-					
-					if (Player.bookmarkData.feed.entry.length > 0) 
+					for(var i=0; i < Player.bookmarkData.feed.entry.length; i++)
 					{
-						for(var i=0; i < Player.bookmarkData.feed.entry.length; i++)
+						if (Player.bookmarkData.feed.entry[i].link[0].href == item.link[0].href) 
 						{
-							if (Player.bookmarkData.feed.entry[i].link[0].href == item.link[0].href) 
-							{
-								bookMark.src = "images/player/bookmarked.png";
-								bookMark.onclick = (function(){
-									event.cancelBubble = true;
-									Player.db.execute(Player.SQL.deleteBookmark, [Player.bookmarkData.feed.entry[i].id]);
-									
-									Player.updateFlag = true;
-									$MQ("l:player.search");
-								});
+							bookMark.src = "images/player/bookmarked.png";
+							bookMark.onclick = (function(){
+								event.cancelBubble = true;
+								Player.db.execute(Player.SQL.deleteBookmark, [Player.bookmarkData.feed.entry[i].id]);
 								
-								mediaItem.isBookmarked = true;
-								
-								break;
-							}
-							else 
-							{	
-								bookMark.src = "images/player/bookmarks.png";
-								bookMark.onclick = function(){
-									event.cancelBubble = true;
-									addBookMark();
-								};
-							}
+								Player.updateFlag = true;
+								$MQ("l:player.search");
+							});
+							
+							mediaItem.isBookmarked = true;
+							
+							break;
+						}
+						else 
+						{	
+							bookMark.src = "images/player/bookmarks.png";
+							bookMark.onclick = function(){
+								event.cancelBubble = true;
+								addBookMark();
+							};
 						}
 					}
-					else
-					{
-						bookMark.src = "images/player/bookmarks.png";
-						bookMark.onclick = function(){
-									event.cancelBubble = true;
-									addBookMark();
-								};
-					}
-					
-					var addBookMark = (function()
-						{	
-							Player.db.execute(Player.SQL.addBookmark, [
-								item.link[0].href, 
-								item.media$group.media$title.$t, 
-								item.media$group.media$description.$t, 
-								item.media$group.media$thumbnail[0].url]);
-							
-							Player.updateFlag = true;
-							$MQ("l:player.search");
-						});						
-					
-					mediaItem.appendChild(bookMark);		
-					
-					$("searchResults").appendChild(mediaItem);
-
 				}
 				else
 				{
-					var remove = document.createElement("img");
-					remove.src = "images/player/bookmarked.png";
-					remove.className = "activeBookMark";
-					remove.title = "Remove";
-					remove.onclick = (function()
-					{
-						event.cancelBubble = true;
-						
-						Player.db.execute(Player.SQL.deleteBookmark, [item.id]);
+					bookMark.src = "images/player/bookmarks.png";
+					bookMark.onclick = function(){
+								event.cancelBubble = true;
+								addBookMark();
+							};
+				}
+				
+				var addBookMark = (function()
+					{	
+						Player.db.execute(Player.SQL.addBookmark, [
+							item.link[0].href, 
+							item.media$group.media$title.$t, 
+							item.media$group.media$description.$t, 
+							item.media$group.media$thumbnail[0].url]);
 						
 						Player.updateFlag = true;
 						$MQ("l:player.search");
-					});			
-					
-					mediaItem.isBookmarked = true;
-					
-					mediaItem.appendChild(remove);					
+					});						
+				
+				mediaItem.appendChild(bookMark);		
+				
+				$("searchResults").appendChild(mediaItem);
 
-					$("bookmarkResults").appendChild(mediaItem);
-				}
+			}
+			else
+			{
+				var remove = document.createElement("img");
+				remove.src = "images/player/bookmarked.png";
+				remove.className = "activeBookMark";
+				remove.title = "Remove";
+				remove.onclick = (function()
+				{
+					event.cancelBubble = true;
+					
+					Player.db.execute(Player.SQL.deleteBookmark, [item.id]);
+					
+					Player.updateFlag = true;
+					$MQ("l:player.search");
+				});			
+				
+				mediaItem.isBookmarked = true;
+				
+				mediaItem.appendChild(remove);					
 
-			});
-		}
-	});
+				$("bookmarkResults").appendChild(mediaItem);
+			}
+
+		});
+	}	
 });
 

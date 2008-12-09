@@ -60,7 +60,7 @@ html
 	background-color: #000;
 }
 
-#mediaContainer, #splash, #logo, #appTitle
+#mediaContainer, #splash, #logo, #searching, #appTitle
 {
 	position: fixed;
 	top: 80px;
@@ -69,6 +69,14 @@ html
 	bottom: 100px;
 	background-color: #000;	
 
+}
+
+#searching
+{
+	padding-top: 300px;
+	text-align: center;
+	vertical-align: middle;
+	background-color: transparent;
 }
 
 #splash
@@ -88,6 +96,7 @@ html
 	background-position-x: center;
 	background-position-y: center;		
 	opacity: .60;
+	z-index: 100;
 }
 
 #appTitle
@@ -118,12 +127,13 @@ html
 	right: 70px;
 	height: 20px;
 	background-image: url('images/player/progress.png');
-	background-repeat: repeat-x;	
+	background-repeat: repeat-x;
+	overflow-x: hidden;	
 }
 
 #progressBarHandle
 {
-	position: relative;
+	position: absolute;
 	left: -45px;
 	height: 20px;
 	width: 50px;
