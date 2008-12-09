@@ -21,7 +21,6 @@ window.onYouTubePlayerReady = function(playerId)
 {
 	ytplayer = document.getElementById("myytplayer");
 	ytplayer.loadVideoById(currentVideo.id, 0);
-	ytplayer.mute();
 	
 	Player.updateProgressInterval = setInterval(Player.updateProgressBar, 1);
 	//ytplayer.addEventListener("onStateChange", "onytplayerStateChange");
