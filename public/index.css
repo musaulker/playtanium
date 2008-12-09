@@ -13,6 +13,11 @@ body
 	color: #fff;
 }
 
+body.win32 {
+	/* f9f9f9 is the special transparency for win32 */
+	background-color: #f9f9f9;
+}
+
 #close
 {
 	position: fixed;
@@ -67,7 +72,7 @@ html
 	left: 100px;
 	right: 100px;
 	bottom: 100px;
-	background-color: #000;	
+	background-color: #000;
 
 }
 
@@ -106,7 +111,7 @@ html
 	text-align: center;
 	background-color: transparent;
 	color: #50741c;
-	text-shadow: rgb(0, 0, 0) 2px 2px 8px;	
+	text-shadow: rgb(0, 0, 0) 2px 2px 8px;
 }
 
 #mediaControls
@@ -493,6 +498,12 @@ input[type=password]:focus {
 	background-image: url('images/player/ne.png');
 	background-repeat: no-repeat;
 }
+
+body.win32 #ne
+{
+	background-image: url('images/player/win_ne.png');
+}
+
 #nw
 {
 	position: fixed;
@@ -504,6 +515,12 @@ input[type=password]:focus {
 	background-image: url('images/player/nw.png');
 	background-repeat: no-repeat;
 }
+
+body.win32 #nw
+{
+	background-image: url('images/player/win_nw.png');
+}
+
 #se
 {
 	position: fixed;
@@ -515,6 +532,12 @@ input[type=password]:focus {
 	background-image: url('images/player/se.png');
 	background-repeat: no-repeat;
 }
+
+body.win32 #se
+{
+	background-image: url('images/player/win_se.png');
+}
+
 #sw
 {
 	position: fixed;
@@ -525,5 +548,10 @@ input[type=password]:focus {
 	
 	background-image: url('images/player/sw.png');
 	background-repeat: no-repeat;
+}
+
+body.win32 #sw
+{
+	background-image: url('images/player/win_sw.png');
 }
 

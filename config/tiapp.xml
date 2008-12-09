@@ -24,7 +24,7 @@
 		<closeable>true</closeable>
 		<resizable>true</resizable>
 		<chrome scrollbars="true">true</chrome>
-		<transparency>.99</transparency>
+		<transparency>0.99</transparency>
 	</window>
 
 	<icon>

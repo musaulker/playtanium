@@ -36,7 +36,11 @@ var Player = null;
 
 ti.ready(function() {
 
-	//$("#play").on("click then r:player.action[mode=play]");
+   ti.Extras.setDraggableRegionHandler(function (target,x,y)
+   {
+           return (target.id == "n" || target.id == "nw" || target.id == "ne" || target.id == "mediaInformation");
+   });
+
 
 	Appcelerator.Compiler.registerCustomAction('close',
 	{

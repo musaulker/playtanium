@@ -19,10 +19,10 @@
 
 		<div id="playerBody">
 			<div id="background"></div>
-			<!-- div id="n"></div -->
-			<!-- div id="e"></div -->
-			<!-- div id="s"></div -->
-			<!-- div id="w"></div -->
+			<div id="n"></div>
+			<div id="e"></div>
+			<div id="s"></div>
+			<div id="w"></div>
 			<div id="ne"></div>
 			<div id="se"></div>
 			<div id="nw"></div>
@@ -51,11 +51,21 @@
 				on="l:player[mode=search] then hide
 					or l:player[mode=bookmarks] then hide
 					or l:player[mode=play] then effect[appear]">
+<<<<<<< HEAD:public/index.html
 				<div id="progressBar" on="click then script[Player.jumpTo()]">
 					<div id="progressBarHandle" style="left: 0px;"
 						set="behavior[draggable, constraint=horizontal]"
 						on="drag then script[Player.hConstraint(100, 740)]
 								or dragend then script[Player.cueVideo()]">
+=======
+				<div id="progressBar">
+					<div id="progressBarHandle" 
+						set="behavior[draggable, constraint=horizontal"
+						on="mouseup then script[alert($progressBarHandle.offsetLeft)]
+							or mousedown then script[alert($progressBarHandle.offsetLeft)]
+							or drag then script[alert('x')]
+							">
+>>>>>>> f81234aaafd23225fa1a2a471560a9b15c1ce32c:public/index.html
 						<div id="handlePointer"></div>
 					</div>
 				</div>
