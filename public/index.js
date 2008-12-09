@@ -22,7 +22,7 @@ window.onYouTubePlayerReady = function(playerId)
 	ytplayer = document.getElementById("myytplayer");
 	ytplayer.loadVideoById(currentVideo.id, 0);
 	
-	//setInterval(updateytplayerInfo, 250);
+	setInterval(Player.updateProgressBar, 100);
 	//ytplayer.addEventListener("onStateChange", "onytplayerStateChange");
 };	
 
@@ -89,6 +89,15 @@ ti.ready(function() {
 			return false;
 		},
 		
+		updateProgressBar: function()
+		{
+			var currentPosition = ytplayer.getCurrentTime();
+			var duration = ytplayer.getDuration();
+			
+			var unitPosition = currentDu;
+			$("progressBarHandle").style.left = offsetPosition + "px";
+		},
+		
 		cueVideo: function()
 		{
 			if(event.x > Player.leftPos && event.y < Player.rightPos)
@@ -150,23 +159,24 @@ ti.ready(function() {
 	
 	Player.Init();
 
-
-	
 	$MQL("l:player.stop", function(msgId, msgData)
 	{ 
 		currentVideo.position = 0;
 		ytplayer.stopVideo();
 		ytplayer.clearVideo();
+
+		$("progressBarHandle").style.left = "-45px";
 	});
 
 	$MQL("l:player.play", function(msgId, msgData)
 	{
-		if (currentVideo.position != 0) 
+		if (currentVideo.position != 0)
 		{
 			ytplayer.playVideo();
 		}
-		else 
+		else
 		{
+			$("progressBarHandle").style.left = "-45px";
 			ytplayer.loadVideoById(currentVideo.id, 0);
 		}
 	});
@@ -180,11 +190,13 @@ ti.ready(function() {
 
 	$MQL("l:player.replay", function(msgId, msgData)
 	{
+		$("progressBarHandle").style.left = "-45px";
 		ytplayer.loadVideoById(currentVideo.id, 0);	
 	});
 	
 	$MQL("r:player.load", function(msgId, msgData)
 	{	
+		$("progressBarHandle").style.left = "-45px";
 		ytplayer.loadVideoById(currentVideo.id, 0);
 	});
 	
@@ -198,7 +210,9 @@ ti.ready(function() {
 	});
 	
 	$MQL("l:player", function(msgId, msgData)
-	{			
+	{
+		$("progressBarHandle").style.left = "-45px";
+		
 		if(msgData.mode == "search")
 		{
 			Player.isLocalSearch = false;
