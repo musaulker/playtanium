@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:app="http://www.appcelerator.org">
+	
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <title>Playtainium</title>
+	    <script type="text/javascript" src="entourage/entourage-debug.js"></script>
+	    <script type="text/javascript" src="javascript/tools.js"></script>	
+		<script src="http://www.google.com/uds/api?file=uds.js&amp;v=0.1&amp;key=ABQIAAAA0N9QrER-kxlusW29-pjQExRJyRe-x-GRIVcGAoofBBFCKqMTjRR2BU1ySmBqY_QgrAzVgbnZlVdvkA" type="text/javascript"></script>
+		<script type="text/javascript" src="javascript/swfObject.js"></script>
+		<script type="text/javascript" src="javascript/index.js"></script>
+		
+		<link rel="stylesheet" href="entourage-ui/common/css/jquery-themes/ui.all.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	    <link rel="shortcut icon" href="images/favicon.ico"/>
+		<link rel="stylesheet" href="css/index.css"/>
+
+	</head>
+
+	<body style="visibility: hidden" on="l:app.compiled then visible and l:player.init">
+
+		<div id="playerBody">
+			<div id="background"></div>
+			<div id="ne"></div>
+			<div id="se"></div>
+			<div id="nw"></div>
+			<div id="sw"></div>
+			<div id="close" on="click then script[Titanium.UI.currentWindow.close()]"><img src="images/close.png"/></div>
+			<div id="splash" on="l:hideSplash then hide"></div>
+			<div id="logo" on="l:hideSplash then hide or click then l:player[mode=play, text=expr(Playtanium2.Player.currentVideo.title)] and hide"></div>
+			<div id="appTitle" on="l:hideSplash then hide">Playtanium</div>
+			<div id="searching" style="display: none;" on="l:searching[on=true] then show else hide">
+				<img src='images/player/indicator.gif'>
+			</div>
+			<div id="mediaContainer" style="display: none;"
+				on="l:player[mode=search] then hide
+					or l:player[mode=bookmarks] then hide
+					or l:player[mode=play] then effect[show]">
+			   <div id="ytapiplayer">
+			      You need Flash player 8+ and JavaScript enabled to view this video.
+			    </div>
+			</div>
+			<div id="mediaInformation"
+				on="l:player[mode=search] then value[text]
+					or l:player[mode=bookmarks] then value[text]
+					or l:player[mode=play] then value[text]">
+			</div>
+			
+			<!-- bug. doesn't work as style display none -->
+			<div id="mediaControls"
+				on="l:app.compiled then hide
+					or l:player[mode=search] then hide
+					or l:player[mode=bookmarks] then hide
+					or l:player[mode=play] then show">
+
+					<div id="progressBarContainer">
+						<div id="progressBar" control="jquery_slider">
+						</div>	
+					</div>
+					
+					<div id="volumeBarContainer">
+						<div id="volumeBar" control="jquery_slider[orientation=vertical]">
+						</div>
+						<div id="volume"></div>
+					</div>					
+				
+				<div id="actions">
+					<div id="replay" on="click then l:player.replay"></div>
+					<div id="state">
+						<div id="play"
+							style="display: none"
+							on="click then l:player.play and hide
+								or l:player.play then hide
+								or l:player.stop then effect[show]
+								or l:player.pause then effect[show]">
+						</div>
+						<div id="pause"
+							on="click then l:player.pause and hide 
+								or l:player.stop then hide
+								or l:player.play then effect[show]">
+						</div>
+					</div>
+					<div id="stop"
+						on="click then l:player.stop">
+					</div>
+					
+					<div id="bookmarkCurrent" on="click then l:player.bookmarkCurrent and effect[Opacity,from=1.0,to=0.2,duration=0.5]
+						or l:player.play[bookmarked=false] then effect[show]
+						or l:player.play[bookmarked=true] then effect[Opacity,from=1.0,to=0.2,duration=0.5]">Bookmark</div>
+					<div id="search" on="click then l:player[mode=search, text=Search] and l:player.search and l:hideSplash">Search</div>
+				
+				</div>
+			</div>
+
+			<div id="bookmarks" style="display: none;"
+				on="click then l:clearSearch and l:player[mode=bookmarks, text=Bookmarks] and l:player.search and l:hideSplash
+					or l:player[mode=play] then effect[show]
+					or l:player[mode=search] then hide
+					or l:player[mode=bookmarks] then hide">
+			</div>
+			
+			<div id="bookmarksFromSearch" 
+				on="click then l:clearSearch and l:player[mode=bookmarks, text=Bookmarks] and l:player.search and l:hideSplash
+					or l:player[mode=search] then effect[show]
+					or l:player[mode=play] then hide
+					or l:player[mode=bookmarks] then hide">
+			</div>			
+			
+			<div id="showSearch" style="display: none;" 
+				on="click then l:player[mode=search, text=Search] and l:hideSplash
+					or l:player[mode=bookmarks, text=Bookmarks] then effect[show]
+					or l:player[mode=search] then hide
+					or l:player[mode=play] then show">
+			</div>			
+			
+			<div id="showPlayer" 
+				on="click then l:player[mode=play, text=expr(Playtanium2.Player.currentVideo.title)] and hide
+					or l:player[mode=play] then hide
+					or l:player[mode=search] then effect[show]
+					or l:player[mode=bookmarks] then effect[show]">
+			</div>
+
+			<div id="searchResults" class="results"
+				on="l:player[mode=search, text=Search] then effect[show]
+					or l:player[mode=bookmarks, text=Bookmarks] then hide
+					or l:player[mode=play] then hide">
+			</div>
+			
+			<div id="bookmarkResults" class="results" style="display: none;"
+				on="l:player[mode=bookmarks, text=Bookmarks] then effect[show]
+					or l:player[mode=search, text=Search] then hide
+					or l:player[mode=play] then hide">
+			</div>			
+			
+			<div id="searchControls" 
+				on="l:player[mode=search, text=Search] then effect[show]
+					or l:player[mode=bookmarks, text=Bookmarks] then effect[show]
+				    or l:player[mode=play] then hide">
+				<div id="searchInputBackground">
+					<div id="searchLeft"></div>
+					<div id="searchMiddle"></div>
+					<div id="searchRight"></div>
+					<input type="text" id="searchInput" value="Search YouTube for Videos" 
+						on="keyup then l:player.search and l:hideSplash
+							or l:clearSearch then set[value='']
+							or click then set[color=#fff]
+							or click then set[value=''] if expr[jQuery('#searchInput').get(0).value=='Search YouTube for Videos']
+							or blur then set[color=#666]
+							or blur then set[value='Search YouTube for Videos'] if expr[jQuery('#searchInput').get(0).value=='']"/>
+				</div>
+				
+			</div>
+		</div>
+	</body>
+	
+</html>
+
